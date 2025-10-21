@@ -21,6 +21,8 @@ services:
   backend:
     build: ./backend
     container_name: products_backend
+    env_file:
+      - .env
     environment:
       PORT: 5000
       DB_HOST: db
@@ -28,7 +30,6 @@ services:
       DB_USER: app
       DB_PASSWORD: app
       DB_NAME: appdb
-      CORS_ORIGIN: http://localhost:5173
     depends_on:
       db:
         condition: service_healthy

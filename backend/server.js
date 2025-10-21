@@ -16,8 +16,14 @@ const { Pool } = pkg;
 const app = express();
 app.use(express.json());
 
-const corsOrigin = process.env.CORS_ORIGIN || "*";
-app.use(cors({ origin: corsOrigin }));
+app.use(
+  cors({
+    origin: true, // Разрешить все домены
+    credentials: true,
+    methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization"],
+  })
+);
 
 // Настройка multer для загрузки файлов
 const storage = multer.diskStorage({
@@ -994,7 +1000,7 @@ app.post("/api/auth/login", async (req, res) => {
     }
 
     const { rows } = await pool.query(
-      "SELECT id, username, email, password_hash, role FROM users WHERE username = $1",
+      "SELECT id, username, password_hash, role FROM users WHERE username = $1",
       [username]
     );
 
@@ -1020,7 +1026,6 @@ app.post("/api/auth/login", async (req, res) => {
       user: {
         id: user.id,
         username: user.username,
-        email: user.email,
         role: user.role,
       },
     });
@@ -1045,7 +1050,7 @@ app.get("/api/auth/me", authenticateToken, (req, res) => {
 app.get("/api/users", authenticateToken, requireAdmin, async (req, res) => {
   try {
     const { rows } = await pool.query(
-      "SELECT id, username, email, role, created_at FROM users ORDER BY created_at DESC"
+      "SELECT id, username, role, created_at FROM users ORDER BY created_at DESC"
     );
     res.json(rows);
   } catch (error) {
