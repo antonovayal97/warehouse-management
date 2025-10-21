@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0%" stop-color="#f8fafc"/>
+      <stop offset="100%" stop-color="#eef2f7"/>
+    </linearGradient>
+  </defs>
+  <rect x="0" y="0" width="1200" height="800" fill="url(#bg)"/>
+  <!-- simple shelf scheme -->
+  <g fill="#e5e7eb" stroke="#cbd5e1" stroke-width="2">
+    <rect x="80" y="120" width="1040" height="40" rx="6"/>
+    <rect x="80" y="220" width="1040" height="40" rx="6"/>
+    <rect x="80" y="320" width="1040" height="40" rx="6"/>
+    <rect x="80" y="420" width="1040" height="40" rx="6"/>
+    <rect x="80" y="520" width="1040" height="40" rx="6"/>
+    <rect x="80" y="620" width="1040" height="40" rx="6"/>
+  </g>
+  <text x="600" y="60" text-anchor="middle" font-size="28" fill="#64748b" font-family="Inter, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial">Схема склада</text>
+</svg>
+
+
+
+
+
+
+
+
+
