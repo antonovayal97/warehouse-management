@@ -108,13 +108,6 @@ function LoginPage({ onLogin }) {
             </button>
           </div>
         </form>
-        <div className="text-center text-xs sm:text-sm text-gray-600 bg-gray-100 p-4 rounded-md">
-          <p className="font-medium mb-2">Админ по умолчанию:</p>
-          <div className="space-y-1">
-            <p>Логин: <strong>admin</strong></p>
-            <p>Пароль: <strong>admin123</strong></p>
-          </div>
-        </div>
       </div>
     </div>
   )
