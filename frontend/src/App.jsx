@@ -1,8 +1,8 @@
 import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom'
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
-
+//const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
+const API_BASE = 'http://warehouse-management.twc1.net'
 // Вспомогательная функция для получения заголовков с токеном
 const getAuthHeaders = () => {
   const token = localStorage.getItem('token')
