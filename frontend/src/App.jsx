@@ -1,6 +1,52 @@
 import React, { useEffect, useMemo, useState, useRef, useCallback } from 'react'
 import { BrowserRouter, Routes, Route, Link, useParams, useNavigate } from 'react-router-dom'
 
+// Компонент лоадера
+function Loader({ size = 'md', text = 'Загрузка...' }) {
+  const sizeClasses = {
+    sm: 'w-4 h-4',
+    md: 'w-8 h-8', 
+    lg: 'w-12 h-12',
+    xl: 'w-16 h-16'
+  }
+  
+  return (
+    <div className="flex flex-col items-center justify-center space-y-3">
+      <div className={`${sizeClasses[size]} animate-spin`}>
+        <svg className="w-full h-full text-blue-600" fill="none" viewBox="0 0 24 24">
+          <circle 
+            className="opacity-25" 
+            cx="12" 
+            cy="12" 
+            r="10" 
+            stroke="currentColor" 
+            strokeWidth="4"
+          />
+          <path 
+            className="opacity-75" 
+            fill="currentColor" 
+            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+          />
+        </svg>
+      </div>
+      {text && (
+        <p className="text-sm text-gray-600 animate-pulse">{text}</p>
+      )}
+    </div>
+  )
+}
+
+// Компонент полноэкранного лоадера
+function FullScreenLoader({ text = 'Загрузка...' }) {
+  return (
+    <div className="fixed inset-0 bg-white bg-opacity-90 backdrop-blur-sm z-50 flex items-center justify-center">
+      <div className="bg-white rounded-lg shadow-lg p-8 border border-gray-200">
+        <Loader size="lg" text={text} />
+      </div>
+    </div>
+  )
+}
+
 //const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:5000'
 const API_BASE = 'http://warehouse-management.twc1.net'
 // Вспомогательная функция для получения заголовков с токеном
@@ -104,7 +150,14 @@ function LoginPage({ onLogin }) {
               disabled={loading}
               className="group relative w-full flex justify-center py-3 px-4 border border-transparent text-base sm:text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 transition-colors"
             >
-              {loading ? 'Вход...' : 'Войти'}
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <Loader size="sm" text="" />
+                  <span>Вход...</span>
+                </div>
+              ) : (
+                'Войти'
+              )}
             </button>
           </div>
         </form>
@@ -320,7 +373,14 @@ function UserManagement({ user }) {
                 disabled={creating}
                 className="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 text-sm sm:text-base"
               >
-                {creating ? 'Создание...' : 'Создать'}
+                {creating ? (
+                  <div className="flex items-center space-x-2">
+                    <Loader size="sm" text="" />
+                    <span>Создание...</span>
+                  </div>
+                ) : (
+                  'Создать'
+                )}
               </button>
               <button
                 type="button"
@@ -668,7 +728,11 @@ function ProductsList({ user }) {
   }
 
   const content = useMemo(() => {
-    if (loading && products.length === 0) return <div className="text-gray-500">Загрузка...</div>
+    if (loading && products.length === 0) return (
+      <div className="flex justify-center py-12">
+        <Loader size="lg" text="Загрузка товаров..." />
+      </div>
+    )
     if (error && products.length === 0) return <div className="text-red-600">{error}</div>
     if (!loading && !error && products.length === 0) return <div className="text-gray-500">Ничего не найдено</div>
     return (
@@ -699,7 +763,9 @@ function ProductsList({ user }) {
         {/* Sentinel for infinite scroll */}
         <div ref={sentinelRef} />
         {loadingMore && (
-          <div className="text-gray-500 py-3">Загрузка...</div>
+          <div className="flex justify-center py-6">
+            <Loader size="md" text="Загрузка..." />
+          </div>
         )}
         {!hasMore && products.length > 0 && (
           <div className="text-gray-400 py-3 text-sm text-center">Это все результаты</div>
@@ -863,12 +929,10 @@ function ProductsList({ user }) {
                   className="px-4 py-2 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-2"
                 >
                   {deleting ? (
-                    <>
-                      <svg className="w-3 h-3 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Удаление...
-                    </>
+                    <div className="flex items-center gap-2">
+                      <Loader size="sm" text="" />
+                      <span>Удаление...</span>
+                    </div>
                   ) : (
                     <>
                       <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -902,12 +966,10 @@ function ProductsList({ user }) {
                 className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2"
               >
                 {creating ? (
-                  <>
-                    <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                    </svg>
-                    Создание...
-                  </>
+                  <div className="flex items-center gap-2">
+                    <Loader size="sm" text="" />
+                    <span>Создание...</span>
+                  </div>
                 ) : (
                   'Создать'
                 )}
@@ -956,12 +1018,10 @@ function ProductsList({ user }) {
                   className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 flex items-center gap-2 disabled:bg-gray-400 disabled:cursor-not-allowed"
                 >
                   {importing ? (
-                    <>
-                      <svg className="w-4 h-4 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" />
-                      </svg>
-                      Импорт...
-                    </>
+                    <div className="flex items-center gap-2">
+                      <Loader size="sm" text="" />
+                      <span>Импорт...</span>
+                    </div>
                   ) : (
                     'Импортировать'
                   )}
@@ -1009,7 +1069,7 @@ function ProductDetail({ user }) {
         const productRes = await fetch(`${API_BASE}/api/products/${id}`)
         if (productRes.ok) {
           const productData = await productRes.json()
-          if (!ignore) setProductName(productData.name || `Товар #${id}`)
+          if (!ignore) setProductName(productData.name || ``)
         }
         
         // Загружаем все склады; если points_count отсутствует, досчитываем через /warehouses/:id/map
@@ -1097,7 +1157,7 @@ function ProductDetail({ user }) {
         )}
         </div>
         <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-semibold">{productName || `Товар #${id}`}</h2>
+          <h2 className="text-2xl font-semibold">{productName || ``}</h2>
           
         </div>
         {user.role === 'admin' && showCreateWarehouse && (
@@ -1134,7 +1194,11 @@ function ProductDetail({ user }) {
         )}
         
         <div className="space-y-3">
-          {loading && <div className="text-gray-500">Загрузка...</div>}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <Loader size="lg" text="Загрузка складов..." />
+            </div>
+          )}
           {error && <div className="text-red-600">{error}</div>}
           {!loading && !error && (
             <div className="grid gap-3">
@@ -1169,7 +1233,7 @@ function WarehouseMap({ user }) {
   const [error, setError] = useState('')
   const [productName, setProductName] = useState('')
   const [warehouseName, setWarehouseName] = useState('')
-  const [warehouseImage, setWarehouseImage] = useState('/warehouse-scheme.svg')
+  const [warehouseImage, setWarehouseImage] = useState(null)
   const [showImageUpload, setShowImageUpload] = useState(false)
   const [containerHeight, setContainerHeight] = useState(500)
   const [showWarehouseEdit, setShowWarehouseEdit] = useState(false)
@@ -1256,7 +1320,7 @@ function WarehouseMap({ user }) {
           const productRes = await fetch(`${API_BASE}/api/products/${productId}`)
           if (productRes.ok) {
             const productData = await productRes.json()
-            if (!ignore) setProductName(productData.name || `Товар #${productId}`)
+            if (!ignore) setProductName(productData.name || ``)
           }
         }
 
@@ -1265,8 +1329,8 @@ function WarehouseMap({ user }) {
         if (warehouseRes.ok) {
           const warehouseData = await warehouseRes.json()
           if (!ignore) {
-            setWarehouseName(warehouseData.name || `Склад #${id}`)
-            const imagePath = warehouseData.image_path || '/warehouse-scheme.svg'
+            setWarehouseName(warehouseData.name || ``)
+            const imagePath = warehouseData.image_path || null
             setWarehouseImage(imagePath)
             calculateContainerHeight(imagePath)
           }
@@ -1277,7 +1341,7 @@ function WarehouseMap({ user }) {
             2: "Резервный склад", 
             3: "Региональный склад"
           }
-          if (!ignore) setWarehouseName(warehouseNames[id] || `Склад #${id}`)
+          if (!ignore) setWarehouseName(warehouseNames[id] || ``)
         }
 
         // Загружаем позиции
@@ -1292,15 +1356,9 @@ function WarehouseMap({ user }) {
           setPositions(data.positions || [])
         }
       } catch (e) {
-        if (!ignore) setError('Ошибка загрузки карты склада, показаны мок-данные')
         if (!ignore) {
-          // fallback mock data
-          setPositions([
-            { x: 20, y: 15 },
-            { x: 30, y: 15 },
-            { x: 50, y: 25 },
-            { x: 70, y: 50 }
-          ])
+          // Не показываем ошибку, просто оставляем пустой массив
+          setPositions([])
         }
       }
     }
@@ -1705,9 +1763,8 @@ function WarehouseMap({ user }) {
             </div>
         </div>
         <h2 className="text-xl sm:text-2xl font-semibold">
-          {productName && warehouseName ? `${productName}, ${warehouseName}` : `Склад #${id}`}
+          {productName && warehouseName ? `${productName}, ${warehouseName}` : ``}
         </h2>
-        {error && <div className="text-amber-600 text-sm">{error}</div>}
         {showImageUpload && (
           <div className="bg-purple-50 border border-purple-200 rounded-lg p-4">
             <h3 className="text-purple-800 font-medium mb-3">Загрузка схемы склада</h3>
@@ -1802,16 +1859,29 @@ function WarehouseMap({ user }) {
               handleMapTouchTap(e)
             }}
           >
-            <img 
-              src={warehouseImage.startsWith('/uploads/') ? `${API_BASE}${warehouseImage}` : warehouseImage} 
-              alt="Схема склада" 
-              className="absolute inset-0 w-full h-full object-contain rounded-lg"
-              onError={(e) => {
-                console.log('Image failed to load, falling back to default');
-                e.target.src = '/warehouse-scheme.svg';
-                setWarehouseImage('/warehouse-scheme.svg');
-              }}
-            />
+            {warehouseImage && (
+              <img 
+                src={warehouseImage.startsWith('/uploads/') ? `${API_BASE}${warehouseImage}` : warehouseImage} 
+                alt="Схема склада" 
+                className="absolute inset-0 w-full h-full object-contain rounded-lg"
+                onError={(e) => {
+                  console.log('Image failed to load');
+                  e.target.style.display = 'none';
+                  setWarehouseImage(null);
+                }}
+              />
+            )}
+            {!warehouseImage && (
+              <div className="absolute inset-0 flex items-center justify-center bg-gray-100 rounded-lg">
+                <div className="text-center text-gray-500">
+                  <svg className="w-16 h-16 mx-auto mb-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                  </svg>
+                  <p className="text-lg font-medium">Схема склада не загружена</p>
+                  <p className="text-sm">Загрузите схему через меню "Управление"</p>
+                </div>
+              </div>
+            )}
             <div className="absolute inset-0">
               {positions.map((position, index) => {
                 const isHover = hoverPosition === index

@@ -175,9 +175,9 @@ async function initDb() {
     );
     if (warehouseCount[0].count === 0) {
       const warehouses = [
-        { name: "Главный склад", image_path: "/warehouse-scheme.svg" },
-        { name: "Резервный склад", image_path: "/warehouse-scheme.svg" },
-        { name: "Региональный склад", image_path: "/warehouse-scheme.svg" },
+        { name: "Главный склад", image_path: null },
+        { name: "Резервный склад", image_path: null },
+        { name: "Региональный склад", image_path: null },
       ];
       for (const warehouse of warehouses) {
         await client.query(
@@ -539,11 +539,7 @@ app.post(
           [warehouseId]
         );
 
-        if (
-          oldWarehouse.length > 0 &&
-          oldWarehouse[0].image_path &&
-          !oldWarehouse[0].image_path.startsWith("/warehouse-scheme.svg")
-        ) {
+        if (oldWarehouse.length > 0 && oldWarehouse[0].image_path) {
           const oldImagePath = oldWarehouse[0].image_path.replace(
             "/uploads/",
             "uploads/"
