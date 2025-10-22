@@ -1555,7 +1555,7 @@ function WarehouseMap({ user }) {
           <div className="relative dropdown-container">
             <button 
               onClick={() => setShowDropdown(!showDropdown)}
-              className="px-3 sm:px-4 py-2 bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2 text-sm sm:text-base"
+              className="px-3 sm:px-4 py-2 ml-auto bg-gray-600 text-white rounded-lg hover:bg-gray-700 flex items-center gap-2 text-sm sm:text-base"
             >
               <span className="hidden sm:inline">Управление</span>
               <span className="sm:hidden">Меню</span>
@@ -1873,7 +1873,7 @@ function WarehouseMap({ user }) {
             </p>
           </div>
         )}
-        
+        <div className="pb-16"></div>
       </div>
     </div>
   )
